@@ -1,0 +1,8 @@
+### Create Student
+POST http://localhost:5000/api/students
+Content-Type: application/json
+
+{
+  "name": "Bob White",
+  "regNumber": "IMAP006"
+}
