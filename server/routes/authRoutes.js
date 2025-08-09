@@ -1,16 +1,37 @@
-// server/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 
-// Dummy login route to simulate login and send back role
+// For now, we'll hardcode some sample users
+const users = [
+  { username: 'admin', password: '123456', role: 'admin' },
+  { username: 'staff', password: 'staff123', role: 'staff' },
+  { username: 'hod', password: 'hod123', role: 'hod' },
+  { username: 'exam', password: 'exam123', role: 'exam_officer' }
+];
+
+// Updated login route
 router.post('/login', (req, res) => {
-  const { name, role } = req.body;
-  if (!name || !role) {
-    return res.status(400).json({ error: 'Name and role are required' });
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
   }
 
-  // You can store session info or send token here if needed
-  return res.status(200).json({ message: 'Logged in', name, role });
+  // Find the user in our "database"
+  const user = users.find(
+    (u) => u.username === username && u.password === password
+  );
+
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  // In a real app, you’d generate a JWT or set a session here
+  return res.status(200).json({
+    message: 'Login successful',
+    username: user.username,
+    role: user.role
+  });
 });
 
 module.exports = router;

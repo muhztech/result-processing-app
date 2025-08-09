@@ -1,46 +1,63 @@
-// src/components/LoginForm.jsx
+// client/src/components/LoginForm.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useRole } from '../context/RoleContext';
 
 export default function LoginForm() {
-  const [name, setName] = useState('');
-  const [selectedRole, setSelectedRole] = useState('staff');
   const { setRole } = useRole();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (name.trim()) {
-      setRole(selectedRole.toLowerCase());
+    setError('');
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/login', {
+        username,
+        password
+      });
+
+      setRole(res.data.role);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed');
     }
   };
 
   return (
-    <form onSubmit={handleLogin} className="space-y-4 bg-white p-4 rounded shadow">
-      <h2 className="text-lg font-semibold">Login</h2>
-
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Enter your name"
-        required
-        className="w-full p-2 border"
-      />
-
-      <select
-        value={selectedRole}
-        onChange={(e) => setSelectedRole(e.target.value)}
-        className="w-full p-2 border"
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-6 rounded shadow-md w-80"
       >
-        <option value="admin">Admin</option>
-        <option value="exam_officer">Exam Officer</option>
-        <option value="hod">HOD</option>
-        <option value="staff">Staff</option>
-      </select>
+        <h2 className="text-xl font-bold mb-4">Login</h2>
 
-      <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-        Login
-      </button>
-    </form>
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+
+        <label className="block mb-2">Username</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="border w-full p-2 mb-4"
+        />
+
+        <label className="block mb-2">Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border w-full p-2 mb-4"
+        />
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
+        >
+          Login
+        </button>
+      </form>
+    </div>
   );
 }
