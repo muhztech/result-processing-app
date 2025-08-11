@@ -1,29 +1,31 @@
+// routes/courseRoutes.js
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Get all subjects
+// Get all courses
 router.get('/', async (req, res) => {
   try {
-    const subjects = await prisma.subject.findMany();
-    res.json(subjects);
+    const courses = await prisma.course.findMany();
+    res.json(courses);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch subjects' });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch courses' });
   }
 });
 
-// Temporary route to seed subjects
+// Temporary route to seed courses
 router.get('/seed', async (req, res) => {
   try {
-    await prisma.subject.createMany({
+    await prisma.course.createMany({
       data: [
         { name: 'Mathematics' },
         { name: 'English Language' },
         { name: 'Physics' },
       ],
     });
-    res.send('Subjects seeded ✅');
+    res.send('Courses seeded ✅');
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Seeding failed' });

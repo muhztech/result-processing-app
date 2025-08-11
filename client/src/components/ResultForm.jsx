@@ -4,9 +4,9 @@ import { useRole } from '../context/RoleContext';
 
 export default function ResultForm() {
   const [students, setStudents] = useState([]);
-  const [subjects, setSubjects] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [studentId, setStudentId] = useState('');
-  const [subject, setSubject] = useState('');
+  const [course, setCourse] = useState('');
   const [ca, setCa] = useState('');
   const [exam, setExam] = useState('');
   const [semester, setSemester] = useState('');
@@ -16,13 +16,13 @@ export default function ResultForm() {
   useEffect(() => {
     fetch('http://localhost:5000/api/students')
       .then(res => res.json())
-      .then(setStudents)
+      .then(data => Array.isArray(data) ? setStudents(data) : setStudents([]))
       .catch(() => setMessage('Failed to load students'));
 
-    fetch('http://localhost:5000/api/subjects')
+    fetch('http://localhost:5000/api/courses')
       .then(res => res.json())
-      .then(setSubjects)
-      .catch(() => setMessage('Failed to load subjects'));
+      .then(data => Array.isArray(data) ? setCourses(data) : setCourses([]))
+      .catch(() => setMessage('Failed to load courses'));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -38,7 +38,7 @@ export default function ResultForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           studentId: Number(studentId),
-          subject,
+          course, // ✅ now course instead of subject
           ca: Number(ca),
           exam: Number(exam),
           semester: Number(semester),
@@ -53,7 +53,7 @@ export default function ResultForm() {
       } else {
         setMessage('✅ Result submitted successfully');
         setStudentId('');
-        setSubject('');
+        setCourse('');
         setCa('');
         setExam('');
         setSemester('');
@@ -82,15 +82,15 @@ export default function ResultForm() {
       </select>
 
       <select
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
+        value={course}
+        onChange={(e) => setCourse(e.target.value)}
         required
         className="w-full p-2 border"
       >
-        <option value="">Select Subject</option>
-        {subjects.map((s) => (
-          <option key={s.id} value={s.name}>
-            {s.name}
+        <option value="">Select Course</option>
+        {courses.map((c) => (
+          <option key={c.id} value={c.name}>
+            {c.name}
           </option>
         ))}
       </select>

@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,29 +10,31 @@ datasource db {
 }
 
 model Student {
-  id         Int      @id @default(autoincrement())
-  name       String
-  regNumber  String   @unique
-  level      String   @default("ND1") // ✅ Default set to allow migrations
-  results    Result[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  regNumber String   @unique
+  level     String   @default("ND1") // ✅ Default set to allow migrations
+  results   Result[]
 }
 
 model Result {
-  id         Int      @id @default(autoincrement())
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  subject    String
-  ca         Int
-  exam       Int
-  total      Int
-  grade      String
-  remark     String
-  semester   Int
+  id        Int     @id @default(autoincrement())
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  course String // required again
+
+  ca       Int
+  exam     Int
+  total    Int
+  grade    String
+  remark   String
+  semester Int
 }
 
-model Subject {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+model Course {
+  id   Int    @id @default(autoincrement())
+  name String @unique
 }
 
 model Admin {
